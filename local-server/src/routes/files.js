@@ -11,9 +11,18 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 const { computeFileHash, getAllFiles, isAllowedExtension } = require('../utils/fileUtils');
 
 const router = express.Router();
+
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -49,7 +58,7 @@ const upload = multer({
  * Returns a list of all audio files in the upload directory,
  * including their MD5 hash and size for delta sync comparison.
  */
-router.get('/files', async (req, res) => {
+router.get('/files', apiLimiter, async (req, res) => {
   try {
     const uploadDir = req.app.locals.uploadDir;
     const files = await getAllFiles(uploadDir);
@@ -78,7 +87,7 @@ router.get('/files', async (req, res) => {
  * Accepts a multipart form upload with a 'file' field.
  * Returns success/failure with the stored filename.
  */
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload', apiLimiter, upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ success: false, message: 'No file provided' });
   }
@@ -97,7 +106,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
  * DELETE /files/:name
  * Deletes a specific file by name.
  */
-router.delete('/files/:name', (req, res) => {
+router.delete('/files/:name', apiLimiter, (req, res) => {
   const uploadDir = req.app.locals.uploadDir;
   // Sanitize to prevent path traversal
   const safeName = path.basename(req.params.name);
