@@ -35,7 +35,7 @@ function computeFileHash(filePath) {
 async function getAllFiles(dirPath) {
   if (!fs.existsSync(dirPath)) return [];
 
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
   return entries
     .filter(entry => entry.isFile() && isAllowedExtension(entry.name))
     .map(entry => path.join(dirPath, entry.name));

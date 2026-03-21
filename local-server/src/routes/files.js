@@ -107,9 +107,13 @@ router.delete('/files/:name', (req, res) => {
     return res.status(404).json({ success: false, message: 'File not found' });
   }
 
-  fs.unlinkSync(filePath);
-  console.log(`Deleted: ${safeName}`);
-  res.json({ success: true, message: `${safeName} deleted` });
+  fs.promises.unlink(filePath).then(() => {
+    console.log(`Deleted: ${safeName}`);
+    res.json({ success: true, message: `${safeName} deleted` });
+  }).catch((err) => {
+    console.error('Error deleting file:', err);
+    res.status(500).json({ success: false, message: 'Failed to delete file' });
+  });
 });
 
 module.exports = { router };
