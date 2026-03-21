@@ -13,6 +13,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/node</string>
+    <!-- UPDATE THIS PATH to the absolute path of your local-server/src/index.js -->
     <string>/path/to/Weaper/local-server/src/index.js</string>
   </array>
   <key>EnvironmentVariables</key>
