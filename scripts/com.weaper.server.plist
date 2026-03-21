@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS Launch Agent for Weaper Sync Server.
+  Install with:
+    cp com.weaper.server.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.weaper.server.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.weaper.server</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/path/to/Weaper/local-server/src/index.js</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PORT</key>
+    <string>3000</string>
+    <key>UPLOAD_DIR</key>
+    <string>/Users/user/Documents/REAPER Media/Weaper</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/tmp/weaper-server.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/weaper-server-error.log</string>
+</dict>
+</plist>
