@@ -109,8 +109,8 @@ fun WeaperNavGraph() {
 
             composable(Screen.PlaylistCreate.route) {
                 PlaylistCreationScreen(
-                    onNavigateToPlayer = {
-                        navController.popBackStack(Screen.Playlists.route, inclusive = false)
+                    onNavigateToPlayer = { playlistId ->
+                        navController.navigate(Screen.PlaylistPlayer.createRoute(playlistId))
                     },
                     onNavigateBack = { navController.popBackStack() }
                 )

@@ -34,7 +34,7 @@ import com.weaper.presentation.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistCreationScreen(
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (String) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: PlaylistCreationViewModel = hiltViewModel()
 ) {
@@ -42,6 +42,14 @@ fun PlaylistCreationScreen(
     var showNameDialog by remember { mutableStateOf(false) }
     var showAddTrackDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Navigate to player once playlist is created and its ID is available
+    LaunchedEffect(uiState.createdPlaylistId) {
+        val id = uiState.createdPlaylistId
+        if (!id.isNullOrBlank()) {
+            onNavigateToPlayer(id)
+        }
+    }
 
     uiState.errorMessage?.let { msg ->
         LaunchedEffect(msg) {
@@ -186,7 +194,7 @@ fun PlaylistCreationScreen(
             onCreate = { name ->
                 viewModel.createPlaylist(name)
                 showNameDialog = false
-                onNavigateToPlayer()
+                // Navigation to player is triggered by LaunchedEffect on createdPlaylistId
             }
         )
     }
@@ -225,8 +233,8 @@ private fun ReorderableSelectedList(
     var dragOffsetY by remember { mutableStateOf(0f) }
     val itemHeightDp = 68.dp
     // Capture LocalDensity here (in Composable scope) for use inside pointerInput
-    val localDensity = androidx.compose.ui.platform.LocalDensity.current
-    val itemHeightPx = with(localDensity) { itemHeightDp.toPx() }
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val itemHeightPx = with(density) { itemHeightDp.toPx() }
 
     Column(modifier = modifier) {
         localItems.forEachIndexed { index, track ->
@@ -249,7 +257,9 @@ private fun ReorderableSelectedList(
                     index = index,
                     onRemove = { onRemove(track) },
                     dragHandle = Modifier.pointerInput(track.id) {
-                        // track.id is stable → pointerInput isn't restarted on reorder
+                        // Using track.id as key keeps this block alive through reorders.
+                        // draggedId, isDragging and dragOffsetY are Compose State vars defined
+                        // in the outer scope, so they're always read at call time – not stale.
                         detectDragGesturesAfterLongPress(
                             onDragStart = {
                                 isDragging = true

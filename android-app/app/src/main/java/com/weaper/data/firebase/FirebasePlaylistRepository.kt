@@ -38,12 +38,14 @@ class FirebasePlaylistRepository @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    override suspend fun savePlaylist(playlist: Playlist) {
-        try {
+    override suspend fun savePlaylist(playlist: Playlist): String {
+        return try {
             if (playlist.id.isBlank()) {
-                firestore.collection(COLLECTION).add(playlist).await()
+                val ref = firestore.collection(COLLECTION).add(playlist).await()
+                ref.id
             } else {
                 firestore.collection(COLLECTION).document(playlist.id).set(playlist).await()
+                playlist.id
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to save playlist", e)

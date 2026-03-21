@@ -20,7 +20,8 @@ data class PlaylistCreationUiState(
     val orderedSelectedTracks: List<ReaperTrack> = emptyList(),
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val createdPlaylistId: String? = null
 )
 
 @HiltViewModel
@@ -92,8 +93,8 @@ class PlaylistCreationViewModel @Inject constructor(
                     name = name,
                     trackIds = current.orderedSelectedTracks.map { it.id }
                 )
-                playlistRepository.savePlaylist(playlist)
-                _uiState.value = _uiState.value.copy(isSaving = false)
+                val newId = playlistRepository.savePlaylist(playlist)
+                _uiState.value = _uiState.value.copy(isSaving = false, createdPlaylistId = newId)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,

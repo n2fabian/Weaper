@@ -38,7 +38,9 @@ class PlaylistPlayerViewModel @Inject constructor(
     private val oscClient: OscClient
 ) : ViewModel() {
 
-    private val playlistId: String = savedStateHandle["playlistId"] ?: ""
+    private val playlistId: String = checkNotNull(savedStateHandle["playlistId"]) {
+        "PlaylistPlayerViewModel requires a non-null 'playlistId' navigation argument"
+    }
 
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
