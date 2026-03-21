@@ -29,7 +29,6 @@ class AppPreferences @Inject constructor(
 
         const val DEFAULT_OSC_PORT = 8000
         const val DEFAULT_SYNC_SERVER_URL = "http://192.168.0.100:3000"
-        const val DEFAULT_SYNC_DIRECTORY = "/Users/user/Documents/REAPER Media"
     }
 
     private val dataStore = context.dataStore

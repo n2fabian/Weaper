@@ -56,7 +56,7 @@ object OscMessage {
         val bytes = str.toByteArray(StandardCharsets.UTF_8)
         buffer.put(bytes)
         buffer.put(0) // null terminator
-        // Pad to 4-byte boundary
+        // Round up to next 4-byte boundary: add 3 then clear the low 2 bits (3.inv() = 0xFFFFFFFC)
         val padded = (bytes.size + 1 + 3) and 3.inv()
         val padding = padded - (bytes.size + 1)
         repeat(padding) { buffer.put(0) }

@@ -1,10 +1,12 @@
 package com.weaper.data.firebase
 
+import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.weaper.domain.model.SoundboardItem
 import com.weaper.domain.repository.SoundboardRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,6 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class FirebaseSoundboardRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val firestore: FirebaseFirestore
 ) : SoundboardRepository {
 
@@ -66,10 +69,10 @@ class FirebaseSoundboardRepository @Inject constructor(
     }
 
     override suspend fun updateAvailability(items: List<SoundboardItem>): List<SoundboardItem> {
-        // Check if each file exists in the local sync directory
+        // Use app-specific external directory (same as LocalSyncRepository) for consistency
+        val syncDir = File(context.getExternalFilesDir(null), "Weaper")
         return items.map { item ->
-            val localFile = File("/storage/emulated/0/Weaper/${item.fileName}")
-            item.copy(isAvailable = localFile.exists())
+            item.copy(isAvailable = File(syncDir, item.fileName).exists())
         }
     }
 }
