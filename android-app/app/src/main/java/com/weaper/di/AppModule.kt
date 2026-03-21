@@ -1,9 +1,13 @@
 package com.weaper.di
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.weaper.data.firebase.FirebasePlaylistRepository
+import com.weaper.data.firebase.FirebaseReaperTrackRepository
 import com.weaper.data.firebase.FirebaseSetlistRepository
 import com.weaper.data.firebase.FirebaseSoundboardRepository
 import com.weaper.data.local.LocalSyncRepository
+import com.weaper.domain.repository.PlaylistRepository
+import com.weaper.domain.repository.ReaperTrackRepository
 import com.weaper.domain.repository.SetlistRepository
 import com.weaper.domain.repository.SoundboardRepository
 import com.weaper.domain.repository.SyncRepository
@@ -29,6 +33,14 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindSyncRepository(impl: LocalSyncRepository): SyncRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlaylistRepository(impl: FirebasePlaylistRepository): PlaylistRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReaperTrackRepository(impl: FirebaseReaperTrackRepository): ReaperTrackRepository
 
     companion object {
         @Provides
