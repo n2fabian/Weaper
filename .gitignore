@@ -1,1 +1,3 @@
 local-server/node_modules/
+
+# .agent-relay must NOT be in .gitignore — it is committed to VCS for cross-device agent handoff

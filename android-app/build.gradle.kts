@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
+    id("com.google.firebase.appdistribution") version "5.0.0" apply false
 }

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("com.google.firebase.appdistribution") version "5.0.0"
 }
 
 android {
@@ -38,6 +39,13 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+
+    firebaseAppDistribution {
+        appId = System.getenv("FIREBASE_APP_ID") ?: "YOUR_APP_ID"
+        releaseNotes = "Build ${System.getenv("BUILD_NUMBER") ?: "local"}"
+        groups = System.getenv("DEPLOY_GROUP") ?: "dev"
+        // auth: either serviceCredentialsFile or FIREBASE_TOKEN env var is used automatically
     }
 }
 
